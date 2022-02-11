@@ -4,14 +4,15 @@
     <h2 class="card-title">{{name.official}}</h2>
   </div>
   <div class="card-body">
-    <p class="card-text">Capital: {{capital}}</p>
-    <p class="card-text">Population: {{population}}</p>
-
-    <p class="card-text"><b>languages:</b></p>
+    <p class="card-text"><b>Capital:</b> {{capital}}</p>
+    <p class="card-text"><b>Population:</b> {{population}}</p>
+    <p class="card-text"><b>languages:</b>
     <ul class="list-group">
     {{#each languages}}
-      <li class="list-group-item">{{languages}}</li>
+      <li class="list-group-item">{{this}}</li>
     {{/each}}
     </ul>
+    </p>
+    
   </div>
 </div>

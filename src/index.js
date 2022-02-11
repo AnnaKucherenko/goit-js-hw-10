@@ -1,12 +1,11 @@
-import debounce from 'lodash/debounce';
+import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 import './css/styles.css';
 import  { fetchCountries }  from './api/fetchCountries';
-import countryCard from './tamplates/country-card.hbs';
+import countryCard from './templates/country-card.hbs';
 
 
 const DEBOUNCE_DELAY = 300;
-
 
 const inputEl = document.querySelector('#search-box');
 const countryList =  document.querySelector('.country-list');
@@ -18,20 +17,25 @@ function onTextInput(evt){
   const input = evt.currentTarget.value;
   console.log(input);
   
-  if (input.length === 1) {
-     Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
-  }
   const trimmedString=input.trim();
    
   fetchCountries(trimmedString)
-    .then(renderCountryCard)
+    .then((names) => {
+      const numberOfCountries = names.length;
+      if (numberOfCountries >= 10) {
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
+      }
+      if (numberOfCountries >= 2) {
+        renderCountryList(names);
+      }
+      if(numberOfCountries===1) {
+        renderCountryCard(names);
+      }}
+      
+    )
     .catch(onFetchError);
     // .finally(() => input.reset());
 }
-
-// способ как выбрать отрисовку списка или карты 
-// в зависимости от количества вернувшихся стран еще не придумал,
-// поэтому подставляю в зен либо  renderCountryList либо renderCountryCard
 
 // Вариант для отрисовки списка стран
 
@@ -48,8 +52,8 @@ function renderCountryList(names) {
 }
 
 // Вариант для отрисовки карточки одной страны
-function renderCountryCard({name,capital,population,flags,languages}) {
-  const markup = countryCard({name,capital,population,flags,languages});
+function renderCountryCard(name) {
+  const markup = countryCard(name);
   cardContainer.innerHTML = markup;
 }
 
@@ -57,6 +61,19 @@ function onFetchError() {
   Notiflix.Notify.failure('Oops, there is no country with that name');
   // alert('Oops, there is no country with that name')
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
