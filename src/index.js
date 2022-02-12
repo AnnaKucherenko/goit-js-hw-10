@@ -3,50 +3,59 @@ import Notiflix from 'notiflix';
 import './css/styles.css';
 import  { fetchCountries }  from './api/fetchCountries';
 import countryCard from './templates/country-card.hbs';
+import listOfRelevantCountries from './templates/contries-list.hbs';
 
 const DEBOUNCE_DELAY = 300;
 
 const inputEl = document.querySelector('#search-box');
 const countryList =  document.querySelector('.country-list');
-const cardContainer =  document.querySelector('.country-info');
+const cardContainer = document.querySelector('.country-info');
+const imgEl = document.querySelector('img');
 inputEl.addEventListener('input', debounce(onTextInput, DEBOUNCE_DELAY));
 let input = '';
  
 function onTextInput(evt){
   evt.preventDefault();
   const input = evt.target.value.trim();
-  console.log(input)   
-  fetchCountries(input)
+  if (input.length === 0) {
+    clearCountryList();
+    clearCountryInfo();
+     Notiflix.Notify.failure('Oops, there is no country with that name');
+  } else {
+    fetchCountries(input)
     .then((names) => {
       const numberOfCountries = names.length;
       if (numberOfCountries >= 10) {
-        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
+          clearCountryList();
+          clearCountryInfo();
+          Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
+        }
+      if (numberOfCountries>= 2) {
+          renderCountryList(names);
+          clearCountryInfo();
       }
-      if (numberOfCountries >= 2) {
-        renderCountryList(names);
-      }
-      if(numberOfCountries===1) {
+      if (numberOfCountries === 1) {
+        clearCountryList();
         renderCountryCard(names);
       }}
-      
     )
     .catch(onFetchError);
-    // .finally(() => inputEl.reset());
+  }
   
 }
 
+const clearCountryList = () => {
+  countryList.innerHTML = '';
+}
+const clearCountryInfo = () => {
+  cardContainer.innerHTML = '';
+}
 // Вариант для отрисовки списка стран
 
-function renderCountryList(names) {
-  const markup = names
-    .map(({ name, flags }) => {
-      return `<li>
-          <p> ${flags.svg}</p>
-          <p> ${name.official}</p>
-        </li>`;
-    })
-    .join("");
+function renderCountryList(name) {
+  const markup = listOfRelevantCountries(name);
   countryList.innerHTML = markup;
+  imgEl.classList.add(img - country);
 }
 
 // Вариант для отрисовки карточки одной страны
@@ -58,22 +67,18 @@ function renderCountryCard(name) {
   const cardTitle = document.querySelector('.card-title');
   cardTitle.style.margin = '0px';
   cardTitle.style.marginLeft = '20px';
-  const imgEl = document.querySelector('img');
-  imgEl.style.marginTop = 'auto'; 
-  imgEl.style.marginBottom = 'auto'; 
+  imgEl.classList.add(img - country);
   const listLanguages = document.querySelector('.list-group');
   listLanguages.style.display = 'flex';
-  const itemsLanguages = document.querySelectorAll('.list-group-item');
-  const item = itemsLanguages
-    .map((item) => item.style.listStyle = 'none');
-  
-  
-  
+  listLanguages.style.marginLeft = "10px"
+  const languages = document.querySelector('.card-languages');
+  languages.style.display = 'flex';
+     
 }
 
 function onFetchError() {
   Notiflix.Notify.failure('Oops, there is no country with that name');
-  // alert('Oops, there is no country with that name')
+  
 }
 
 

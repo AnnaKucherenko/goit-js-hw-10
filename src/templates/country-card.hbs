@@ -7,18 +7,17 @@
     <div class="card-body">
       <p class="card-text"><b>Capital:</b> {{capital}}</p>
       <p class="card-text"><b>Population:</b> {{population}}</p>
-      <p class="card-text"><b>languages:</b>
-      <ul class="list-group">
-      {{#each languages}}
-        {{#if }}
-          <li class="list-group-item">{{this}},</li>
-        {{else}}
-          <li class="list-group-item">{{this}}</li>
-        {{/if}}
-      {{/each}}
-      </ul>
-      </p>
       
+      <div class="card-languages">
+        <p class="card-text"><b>languages:</b></p> 
+        <p class="list-group">
+          {{#each languages}}
+            {{#if @index}},{{/if}}
+              {{this}}
+          {{/each}}
+        </p>
+      </div>
+           
     </div>
   </div>
 {{/each}}
