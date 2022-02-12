@@ -4,22 +4,19 @@ import './css/styles.css';
 import  { fetchCountries }  from './api/fetchCountries';
 import countryCard from './templates/country-card.hbs';
 
-
 const DEBOUNCE_DELAY = 300;
 
 const inputEl = document.querySelector('#search-box');
 const countryList =  document.querySelector('.country-list');
 const cardContainer =  document.querySelector('.country-info');
-inputEl.addEventListener('input', onTextInput);
-
+inputEl.addEventListener('input', debounce(onTextInput, DEBOUNCE_DELAY));
+let input = '';
+ 
 function onTextInput(evt){
   evt.preventDefault();
-  const input = evt.currentTarget.value;
-  console.log(input);
-  
-  const trimmedString=input.trim();
-   
-  fetchCountries(trimmedString)
+  const input = evt.target.value.trim();
+  console.log(input)   
+  fetchCountries(input)
     .then((names) => {
       const numberOfCountries = names.length;
       if (numberOfCountries >= 10) {
@@ -34,7 +31,8 @@ function onTextInput(evt){
       
     )
     .catch(onFetchError);
-    // .finally(() => input.reset());
+    // .finally(() => inputEl.reset());
+  
 }
 
 // Вариант для отрисовки списка стран
@@ -55,6 +53,22 @@ function renderCountryList(names) {
 function renderCountryCard(name) {
   const markup = countryCard(name);
   cardContainer.innerHTML = markup;
+  const containerCardImg = document.querySelector('.card-img-top');
+  containerCardImg.style.display = 'flex';
+  const cardTitle = document.querySelector('.card-title');
+  cardTitle.style.margin = '0px';
+  cardTitle.style.marginLeft = '20px';
+  const imgEl = document.querySelector('img');
+  imgEl.style.marginTop = 'auto'; 
+  imgEl.style.marginBottom = 'auto'; 
+  const listLanguages = document.querySelector('.list-group');
+  listLanguages.style.display = 'flex';
+  const itemsLanguages = document.querySelectorAll('.list-group-item');
+  const item = itemsLanguages
+    .map((item) => item.style.listStyle = 'none');
+  
+  
+  
 }
 
 function onFetchError() {
