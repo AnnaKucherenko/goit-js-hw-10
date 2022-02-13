@@ -12,8 +12,11 @@
         <p class="card-text"><b>languages:</b></p> 
         <p class="list-group">
           {{#each languages}}
-            {{#if @index}},{{/if}}
+            {{#if @last}}
               {{this}}
+            {{else}}
+              {{this}},
+            {{/if}}
           {{/each}}
         </p>
       </div>
